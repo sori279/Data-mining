@@ -1676,38 +1676,39 @@ plt.show()
 
 نتیجه:
 
-xx و yy دو آرایه‌ی 2بعدی هستند با مختصات تمام نقاط صفحه.
+xx و yy دو آرایه‌ی 2 بعدی هستند با مختصات تمام نقاط صفحه.
 
-xx.ravel() و yy.ravel() → هر دو را تخت (1D) می‌کند.
+xx.ravel() و yy.ravel() : هر دو را تخت (1D) می‌کند.
 
-np.c_[ ... ] → آن‌ها را در کنار هم می‌چسباند تا آرایه‌ای با شکل (تعداد_نقاط, 2) بسازد.
+np.c_[ ... ] : آن‌ها را در کنار هم می‌چسباند تا آرایه‌ای با شکل 
+(تعداد_نقاط, 2) بسازد.
 (چون مدل انتظار دارد ورودی دوبعدی باشد [x1, x2]).
 
-model.predict(...) → مدل برچسب هر نقطه را پیش‌بینی می‌کند.
+model.predict(...): مدل برچسب هر نقطه را پیش‌بینی می‌کند.
 
-reshape(xx.shape) → نتایج را به شکل شبکه اولیه برمی‌گرداند 
+reshape(xx.shape) : نتایج را به شکل شبکه اولیه برمی‌گرداند 
 تا بتوان آن را مثل نقشه رنگی رسم کرد.
 
 
 
 
 plt.contourf(xx, yy, Z, alpha=0.3)
-→ نواحی تصمیم مدل را با رنگ‌های متفاوت پر می‌کند.
+: نواحی تصمیم مدل را با رنگ‌های متفاوت پر می‌کند.
 هر رنگ نشان‌دهنده‌ی یک کلاس متفاوت است.
 مقدار alpha=0.3 یعنی کمی شفاف تا نقاط اصلی هم دیده شوند.
 
 plt.scatter(...)
 → نقاط واقعی داده (X_2d) را رسم می‌کند.
 
-c=y → رنگ هر نقطه بر اساس کلاس واقعی‌اش تنظیم می‌شود.
+c=y : رنگ هر نقطه بر اساس کلاس واقعی‌اش تنظیم می‌شود.
 
-edgecolors='k' → لبه‌ی سیاه برای وضوح بیشتر.
+edgecolors='k': لبه‌ی سیاه برای وضوح بیشتر.
 
-plt.title, xlabel, ylabel → تنظیم عنوان و محورهای نمودار.
+plt.title, xlabel, ylabel:  تنظیم عنوان و محورهای نمودار.
 '''
 '''
 
- جمع‌بندی مفهومی
+ جمع‌بندی 
 
  
   SVM:               جدا کردن داده‌ها با حداکثر Margin  
@@ -1716,10 +1717,1069 @@ plt.title, xlabel, ylabel → تنظیم عنوان و محورهای نمودا
  C و gamma:        تنظیم پیچیدگی و انعطاف مدل        
 
  مقدار بزرگ C: مدل تلاش می‌کند تمام داده‌ها را 
- کاملاً جدا کند → احتمال بیش‌برازش (Overfitting)
+ کاملاً جدا کند : احتمال بیش‌برازش (Overfitting)
  
 
 '''
+
+'''
+
+---
+
+ موضوع  : انواع رگرسیون (Regression Models)
+
+ 
+---
+
+ فهرست کامل انواع رگرسیون 
+
+1. رگرسیون خطی ساده (Simple Linear Regression)
+2. رگرسیون خطی چندگانه (Multiple Linear Regression)
+3. رگرسیون Ridge (L2 Regularization)
+4. رگرسیون Lasso (L1 Regularization)
+5. Elastic Net Regression (ترکیب L1 و L2)
+6. رگرسیون چندجمله‌ای (Polynomial Regression)
+7. رگرسیون لجستیک (Logistic Regression)
+8. رگرسیون برای داده‌های دسته‌ای
+ (Categorical Regression – Dummy Variables)
+
+  برای هر کدام تعریف، کاربرد، مثال، کد،
+  نحوه تفسیر، تمرین ارائه شده است.
+
+---
+
+   رگرسیون خطی ساده و  چندگانه
+
+---
+
+  1. رگرسیون خطی ساده (Simple Linear Regression)
+
+  تعریف
+
+مدلی برای پیش‌بینی یک متغیر عددی ( y ) بر اساس یک ویژگی ( x ):
+[
+y = b_0 + b_1 x
+]
+
+  کاربردها
+
+ پیش‌بینی قیمت
+  پیش‌بینی درآمد
+ رابطه سن و قد
+  رابطه ساعت مطالعه و نمره
+
+ مثال عملی پایتون  (رابطه ساعت مطالعه و نمره)
+ '''
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# داده‌ها
+hours = np.array([1,2,3,4,5,6]).reshape(-1,1)
+scores = np.array([50,55,65,70,75,82])
+
+# مدل رگرسیون خطی
+model = LinearRegression()
+model.fit(hours, scores)
+
+print("Slope:", model.coef_[0])
+print("Intercept:", model.intercept_)
+print("Score(7h study):", model.predict([[7]])[0])
+
+# پیش‌بینی
+y_pred = model.predict(hours)
+
+# نمودار
+plt.scatter(hours, scores, color='blue', label='Actual Scores')
+plt.plot(hours, y_pred, color='red', label='Regression Line')
+plt.scatter([7], model.predict([[7]]), color='green', s=100, label='Prediction for 7h')
+plt.xlabel("Hours Studied")
+plt.ylabel("Score")
+plt.title("Linear Regression: Hours vs Scores")
+plt.legend()
+plt.show()
+
+
+'''
+دلیل استفاده از reshape(-1,1) این است که
+الگوریتم رگرسیون ورودی را باید به صورت ستونی دریافت کند (n×1).
+
+'''
+
+'''
+
+ نحوه تفسیر
+
+  Slope: چقدر با هر یک ساعت مطالعه نمره افزایش می‌یابد
+Intercept: : عرض از مبدأ مدل رگرسیون خطی نمره اولیه در ساعت صفر
+R²: میزان خوب بودن مدل
+
+---
+
+2. رگرسیون خطی چندگانه (Multiple Linear Regression)
+
+ تعریف
+
+پیش‌بینی خروجی با چند ویژگی ورودی:
+
+[
+y = b_0 + b_1 x_1 + b_2 x_2 + ... + b_n x_n
+]
+
+مثال: پیش‌بینی قیمت خانه
+
+ورودی‌ها:
+
+  متراژ
+  تعداد اتاق
+  سن بنا
+
+
+'''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# داده‌ها
+df = pd.DataFrame({
+    "area": [80, 120, 150, 200],
+    "rooms": [2, 3, 3, 4],
+    "age": [10, 5, 20, 7],
+    "price": [1.1, 1.6, 2.1, 3.0]
+})
+
+X = df[['area','rooms','age']]
+y = df['price']
+
+# مدل رگرسیون خطی
+model = LinearRegression()
+model.fit(X, y)
+
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+
+# پیش‌بینی
+y_pred = model.predict(X)
+
+# نمودار مقایسه واقعی vs پیش‌بینی
+plt.scatter(range(len(y)), y, color='blue', label='Actual Price')
+plt.plot(range(len(y)), y_pred, color='red', marker='o', label='Predicted Price')
+plt.xlabel("Sample Index")
+plt.ylabel("Price")
+plt.title("Linear Regression Predictions vs Actual")
+plt.legend()
+plt.show()
+
+
+'''
+شیب و عرض از مبدا
+'''
+
+'''
+ جلسه ۲ – رگرسیون با منظم‌سازی
+
+
+
+ 3. رگرسیون Ridge (L2 Regularization)
+
+  تعریف
+
+برای جلوگیری از overfitting ضرایب را کوچک می‌کند.
+
+[
+\text{Loss} = MSE + \lambda \sum b_i^2
+]
+
+  کاربرد:
+
+  مدل‌های پر ویژگی
+  جلوگیری از ضرایب بزرگ
+
+  کد:
+
+
+'''
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import Ridge
+
+# داده نمونه: ساعت مطالعه و نمره
+hours = np.array([1, 2, 3, 4, 5, 6]).reshape(-1,1)
+scores = np.array([50, 55, 65, 70, 75, 82])
+
+X = hours
+y = scores
+
+# مدل Ridge
+ridge = Ridge(alpha=1.0)
+ridge.fit(X, y)
+
+# چاپ ضرایب و عرض از مبدأ
+print("Coefficients:", ridge.coef_)
+print("Intercept:", ridge.intercept_)
+print("Predict for 7 hours:", ridge.predict([[7]])[0])
+
+# رسم نمودار
+plt.scatter(hours, scores, color='blue', label="Data")
+plt.plot(hours, ridge.predict(X), color='red', label="Ridge Fit")
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.title("Ridge Regression")
+plt.legend()
+plt.show()
+
+ 
+'''
+خروجی coef_ همان ضرایب مدل است
+
+یعنی وزن‌های مربوط به هر ویژگی (Feature).
+
+در حقیقت همان Slope اما برای یک مدل چندمتغیره.
+
+مثلاً اگر X شامل 3 ویژگی باشد:
+
+ridge.coef_ = [0.45, 1.20, -0.33]
+
+
+تفسیر:
+
+به ازای یک واحد افزایش در ویژگی اول، خروجی 
+به‌طور متوسط 0.45 واحد زیاد می‌شود (در شرط ثابت بودن بقیه ویژگی‌ها).
+
+ویژگی دوم بیشترین اثر را دارد (1.20).
+
+ویژگی سوم اثر منفی دارد (-0.33).
+'''
+'''
+ 4. رگرسیون Lasso (L1 Regularization)
+
+ تعریف
+
+L1 می‌تواند برخی ضرایب را صفر کند : انتخاب ویژگی خودکار
+
+
+  کاربرد:
+
+  داده‌های بسیار بزرگ
+  پیدا کردن ویژگی‌های مهم
+
+  کد:
+
+'''
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import Lasso
+
+# داده نمونه: ساعت مطالعه و نمره
+hours = np.array([1, 2, 3, 4, 5, 6]).reshape(-1,1)
+scores = np.array([50, 55, 65, 70, 75, 82])
+
+X = hours
+y = scores
+
+# مدل Lasso
+lasso = Lasso(alpha=0.1)
+lasso.fit(X, y)
+
+# چاپ ضرایب و عرض از مبدأ
+print("Coefficients:", lasso.coef_)
+print("Intercept:", lasso.intercept_)
+print("Predict for 7 hours:", lasso.predict([[7]])[0])
+
+# رسم نمودار
+plt.scatter(hours, scores, color='blue', label="Data")
+plt.plot(hours, lasso.predict(X), color='green', label="Lasso Fit")
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.title("Lasso Regression")
+plt.legend()
+plt.show()
+
+'''
+ویژگی مهم لاسو: صفر کردن ضرایب
+
+در لاسو، به دلیل جریمه L1:
+
+  بعضی ضرایب دقیقاً صفر می‌شوند.
+
+یعنی:
+
+مدل تشخیص می‌دهد که یک ویژگی کم‌اهمیت است
+
+وزن آن را صفر می‌کند
+
+به‌نوعی آن ویژگی را از مدل حذف می‌کند (Feature Selection)
+
+مثلاً اگر:
+
+lasso.coef_ = [0.72, 0, -0.31, 0, 1.12]
+
+
+یعنی:
+
+ویژگی‌های شماره 2 و 4 بی‌اثر تشخیص داده شده‌اند
+
+مدل آن‌ها را کامل حذف کرده
+
+فقط 3 ویژگی اول، سوم و پنجم اثر دارند
+
+این رفتار در ریج وجود ندارد (ضرایب کوچک می‌شوند ولی صفر نمی‌شوند)
+'''
+
+'''
+
+5. Elastic Net Regression
+
+    ترکیبی از دو مدل Ridge و Lasso می‌باشد.ترکیب L1 و L2:
+
+'''
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import ElasticNet
+
+# داده نمونه: ساعت مطالعه و نمره
+hours = np.array([1, 2, 3, 4, 5, 6]).reshape(-1,1)
+scores = np.array([50, 55, 65, 70, 75, 82])
+
+X = hours
+y = scores
+
+# مدل ElasticNet
+enet = ElasticNet(alpha=0.1, l1_ratio=0.5)
+enet.fit(X, y)
+
+# چاپ ضرایب و عرض از مبدأ
+print("Coefficients:", enet.coef_)
+print("Intercept:", enet.intercept_)
+print("Predict for 7 hours:", enet.predict([[7]])[0])
+
+# رسم نمودار
+plt.scatter(hours, scores, color='blue', label="Data")
+plt.plot(hours, enet.predict(X), color='red', label="ElasticNet Fit")
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.title("ElasticNet Regression")
+plt.legend()
+plt.show()
+
+'''
+جلسه ۳ – رگرسیون چندجمله‌ای + لجستیک
+
+---
+
+6. رگرسیون چندجمله‌ای (Polynomial Regression)
+
+  کاربرد:
+
+داده‌هایی که غیرخطی هستند اما SVM و NN نمی‌خواهیم.
+
+ مثال: رابطه سن و قد کودکان
+
+'''
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+hours = np.array([1,2,3,4,5,6]).reshape(-1,1)
+scores = np.array([50,55,65,70,75,82])
+
+X = hours
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+
+model = LinearRegression()
+model.fit(X_poly, scores)
+
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+print("Predict for 7 hours:", model.predict(poly.transform([[7]]))[0])
+
+plt.scatter(hours, scores, color='blue')
+
+# ایجاد نقاط منحنی
+x_plot = np.arange(1, 7.1, 0.1).reshape(-1,1)
+x_plot_poly = poly.transform(x_plot)
+y_plot = model.predict(x_plot_poly)
+
+plt.plot(x_plot, y_plot)
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.title("Polynomial Regression (degree=2)")
+plt.show()
+
+
+'''
+PolynomialFeatures : ویژگی‌های چندجمله‌ای می‌سازد (x, x², x³, …)
+در اینجا سه ویژگی داریم:
+
+1 (بایاس / ثابت)
+
+x (ساعت مطالعه)
+
+x² (ساعت مطالعه به توان 2)
+
+'''
+
+
+'''
+ 7. رگرسیون لجستیک (Logistic Regression)
+
+  تعریف:
+
+برای پیش‌بینی کلاس‌ها (0/1)
+
+ 
+  مثال: داده Breast Cancer
+
+'''
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+# بارگذاری داده
+data = load_breast_cancer()
+X = data.data
+y = data.target
+feature_names = data.feature_names
+
+# مدل لجستیک
+model = LogisticRegression(max_iter=5000)
+model.fit(X, y)
+
+# دقت مدل
+accuracy = model.score(X, y)
+print("Accuracy:", accuracy)
+
+# وزن ویژگی‌ها
+coefficients = model.coef_[0]
+
+# نمودار میله‌ای وزن ویژگی‌ها
+plt.figure(figsize=(12,6))
+plt.barh(feature_names, coefficients)
+plt.xlabel("Coefficient Value")
+plt.ylabel("Feature")
+plt.title(f"Logistic Regression Coefficients (Accuracy = {accuracy:.3f})")
+plt.show()
+
+'''
+کلاس رگرسیون لجستیک را برای یادگیری مدل رده‌بندی (Classification) وارد می‌کند.
+max_iter=1000 : بیشترین تعداد تکرار برای همگرا شدن الگوریتم بهینه‌سازی 
+(چون داده‌ها زیاد هستند و ممکن 
+                                                                        است به تعداد تکرار بیشتری نیاز داشته باش
+                                                                        
+                                                                         نمودار:
+
+محور Y → نام ویژگی‌ها
+
+محور X → وزن هر ویژگی (coef_)
+
+طول میله → میزان تأثیر آن ویژگی روی پیش‌بینی سرطان بدخیم
+
+میله‌های مثبت → افزایش احتمال سرطان بدخیم
+
+میله‌های منفی → کاهش احتمال سرطان بدخیم
+
+
+رسم نمودار میله‌ای افقی برای وزن‌ها
+
+هدف: تشخیص اینکه کدام ویژگی بیشترین تاثیر را در تصمیم مدل دارد
+
+خروجی نمودار:
+
+محور x → مقدار ضریب (Coefficient)
+
+محور y → نام ویژگی
+
+میله‌های بزرگتر → تاثیر بیشتر روی پیش‌بینی
+'''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+# --- 1. بارگذاری داده Titanic ---
+df = sns.load_dataset('titanic')
+
+# انتخاب چند ویژگی مهم و حذف نمونه‌های ناقص
+df = df[['age', 'fare', 'sex', 'survived']].dropna()
+
+# تبدیل جنسیت به عددی
+df['sex'] = df['sex'].map({'male':0, 'female':1})
+
+# ویژگی‌ها و برچسب
+X = df[['age','fare','sex']]
+y = df['survived']
+
+# استانداردسازی age و fare برای Logistic Regression
+scaler = StandardScaler()
+X[['age','fare']] = scaler.fit_transform(X[['age','fare']])
+
+# --- 2. تقسیم داده ---
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# --- 3. آموزش مدل ---
+model = LogisticRegression(max_iter=5000)
+model.fit(X_train, y_train)
+
+# --- 4. دقت مدل ---
+accuracy = model.score(X_test, y_test)
+print(f"Accuracy: {accuracy:.3f}")
+
+# --- 5. نمودار ضریب ویژگی‌ها ---
+coefficients = model.coef_[0]
+feature_names = X.columns
+
+plt.figure(figsize=(8,5))
+plt.barh(feature_names, coefficients)
+plt.xlabel("Coefficient Value")
+plt.title(f"Logistic Regression Coefficients (Accuracy = {accuracy:.3f})")
+plt.show()
+
+# --- 6. Scatter plot برای دو ویژگی (age vs fare) ---
+plt.figure(figsize=(8,6))
+sns.scatterplot(x=X['age'], y=X['fare'], hue=y, palette='coolwarm', alpha=0.7)
+plt.xlabel('Age (standardized)')
+plt.ylabel('Fare (standardized)')
+plt.title('Logistic Regression - Survival Classes')
+plt.show()
+
+'''
+توضیح خروجی‌ها:
+
+Accuracy: دقت مدل روی داده‌های تست، مثلا 0.78 
+یعنی ۷۸٪ نمونه‌ها درست پیش‌بینی شده‌اند.
+
+Feature Coefficients:
+
+sex ضریب مثبت → احتمال زنده ماندن خانم‌ها بیشتر است
+
+age ضریب منفی → سن بالاتر احتمال بقا را کاهش می‌دهد
+
+fare ضریب مثبت → هرچه هزینه بلیت بالاتر، احتمال بقا بیشتر
+
+Scatter plot:
+
+نقاط با رنگ‌های مختلف → دو کلاس زنده مانده (1) و فوت شده (0)
+
+اینجا می‌توان حدود تصمیم مدل را بصورت تقریبی دید، هرچه 
+در جهت ضریب‌ها باشد، احتمال کلاس 1 بیشتر است
+'''
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# --- 1. بارگذاری داده ---
+iris = load_iris()
+X = iris.data[:, :2]  # فقط دو ویژگی اول (sepal length, sepal width)
+y = iris.target
+feature_names = iris.feature_names[:2]
+class_names = iris.target_names
+
+# --- 2. استانداردسازی ---
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# --- 3. تقسیم داده ---
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# --- 4. آموزش مدل ---
+model = LogisticRegression(multi_class='ovr', max_iter=5000)
+model.fit(X_train, y_train)
+
+# --- 5. دقت مدل ---
+accuracy = model.score(X_test, y_test)
+print(f"Accuracy: {accuracy:.3f}")
+
+# --- 6. نمودار ضریب ویژگی‌ها ---
+plt.figure(figsize=(8,5))
+for i, class_name in enumerate(class_names):
+    plt.barh(feature_names, model.coef_[i], label=f"{class_name}")
+plt.xlabel("Coefficient Value")
+plt.title("Logistic Regression Coefficients")
+plt.legend()
+plt.show()
+
+# --- 7. رسم decision boundary ---
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02),
+                     np.arange(y_min, y_max, 0.02))
+
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.figure(figsize=(8,6))
+plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+sns.scatterplot(x=X[:,0], y=X[:,1], hue=y, palette='coolwarm', edgecolor='k', s=70)
+plt.xlabel(feature_names[0])
+plt.ylabel(feature_names[1])
+plt.title("Logistic Regression Decision Boundary (Iris)")
+plt.show()
+'''
+توضیح خروجی‌ها:
+
+Accuracy: دقت مدل روی داده‌های تست، مثلا 0.97 یعنی
+ ۹۷٪ نمونه‌ها درست پیش‌بینی شده‌اند.
+
+Coefficients:
+
+برای هر کلاس (setosa, versicolor, virginica) یک بردار ضریب داریم که نشان می‌دهد
+ هر ویژگی چقدر در پیش‌بینی آن کلاس اثر دارد.
+
+Decision Boundary:
+
+مناطق رنگی نشان‌دهنده کلاس پیش‌بینی شده توسط مدل هستند
+
+نقاط scatter نشان‌دهنده نمونه‌های واقعی هستند
+
+این نمودار واضح می‌کند که Logistic Regression با استفاده از دو ویژگی
+ اول چگونه نمونه‌ها را از هم جدا می‌کند
+'''
+'''
+مقایسه مدل های رگرسیون
+'''
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+
+data = load_iris()
+X = data.data[:, :3]  # sepal_length, sepal_width, petal_length
+y = data.data[:, 2]    # petal_length
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = ElasticNet(alpha=0.1, l1_ratio=0.5)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+
+models = {
+    "Linear": LinearRegression(),
+    "Ridge": Ridge(alpha=1.0),
+    "Lasso": Lasso(alpha=0.1),
+    "ElasticNet": ElasticNet(alpha=0.1, l1_ratio=0.5)
+}
+
+for name, m in models.items():
+    m.fit(X_train, y_train)
+    score = m.score(X_test, y_test)
+    print(name, "Score:", score)
+
+
+
+
+
+'''
+فصل بعدی
+ Decision Tree & Random Forest
+
+(درخت تصمیم و جنگل تصادفی) 
+
+
+---
+
+ 
+ هدف آموزشی فصل 
+
+1. درخت تصمیم را برای Classification و Regression بسازیم.
+2. فرآیند تقسیم (Splitting) و معیارهای Gini/Entropy را درک کنیم.
+3. Overfitting در درخت‌ها را تشخیص دهیم و آن را کاهش دهیم.
+4. مدل Random Forest بسازیم و تفاوت آن با درخت تکی را بفهمیم.
+5. اهمیت ویژگی‌ها را (Feature Importance) رسم و تحلیل کنیم.
+6. نمودار کامل درخت (Plot Tree) را مشاهده کنیم.
+
+---
+
+ 
+---
+
+ فصل 1 — آشنایی مفهومی با درخت تصمیم 
+
+  مفاهیم پایه
+
+  ساختار درخت
+  گره (Node)
+  برگ (Leaf)
+ معیارهای تقسیم:
+
+    Gini
+    Entropy
+   MSE در رگرسیون
+  مفهوم Depth
+  Overfitting در درخت‌ها
+
+  مثال ساده با یک درخت
+
+ مثال  1 — رسم یک درخت ساده با Iris
+
+'''
+
+
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+
+data = load_iris()
+X, y = data.data, data.target
+
+model = DecisionTreeClassifier(max_depth=3, random_state=42)
+model.fit(X, y)
+
+plt.figure(figsize=(14,8))
+plot_tree(model, feature_names=data.feature_names, class_names=data.target_names,
+          filled=True, fontsize=10)
+plt.title("Decision Tree (max_depth=3)")
+plt.show()
+
+'''
+
+ توضیح: 
+اینجا درخت کامل با رنگ‌بندی، سهم ویژگی‌ها، و کلاس‌ها رسم می‌شود.
+
+ 
+
+  Decision Tree Classification
+
+  مفاهیم:
+
+  چرا درخت برای دسته‌بندی خوب است؟
+  تفسیر مسیر تصمیم (Decision Path)
+  اهمیت ویژگی‌ها (Feature Importance)
+
+  مثال   2 — مرز تصمیم برای 2 ویژگی (با نمودار)
+ '''
+from sklearn import tree
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+import numpy as np
+
+data = load_iris()
+X = data.data[:, :2]  # فقط دو ویژگی برای رسم
+y = data.target
+
+model = tree.DecisionTreeClassifier(max_depth=3)
+model.fit(X, y)
+
+# رسم مرز تصمیم
+x_min, x_max = X[:,0].min()-1, X[:,0].max()+1
+y_min, y_max = X[:,1].min()-1, X[:,1].max()+1
+xx, yy = np.meshgrid(np.linspace(x_min,x_max,300),
+                     np.linspace(y_min,y_max,300))
+
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+
+plt.contourf(xx, yy, Z, alpha=0.3)
+plt.scatter(X[:,0], X[:,1], c=y, edgecolors='k')
+plt.xlabel("Sepal Length")
+plt.ylabel("Sepal Width")
+plt.title("Decision Boundary - Decision Tree")
+plt.show()
+ 
+'''
+
+ توضیح: 
+درخت‌ها مرزهای مستطیلی (Blocky Decision Boundary) می‌سازند. این نمودار دقیقاً نشان می‌دهد.
+
+---
+
+  Decision Tree Regression 
+
+  مفاهیم:
+
+  درخت رگرسیون چگونه کار می‌کند؟
+  معیار MSE
+  تقسیم بازه‌ها
+
+---
+
+  مثال   3 — رگرسیون با نمودار پله‌ای
+
+'''
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeRegressor
+
+X = np.array([1,2,3,4,5,6]).reshape(-1,1)
+y = np.array([50,55,65,70,75,82])
+
+model = DecisionTreeRegressor(max_depth=3)
+model.fit(X, y)
+
+x_plot = np.linspace(1,6,200).reshape(-1,1)
+y_pred = model.predict(x_plot)
+
+plt.scatter(X, y, color='blue')
+plt.plot(x_plot, y_pred, color='red')
+plt.title("Decision Tree Regression (max_depth=3)")
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.show()
+ 
+'''
+ توضیح: 
+درخت رگرسیون خروجی را به شکل پله‌ای (Piecewise Constant) پیش‌بینی می‌کند.
+
+---
+
+   جلوگیری از Overfitting (Pruning)
+
+ مفاهیم:
+
+  max depth
+  min samples split
+  min samples leaf
+  cost complexity pruning (ccp_alpha)
+
+  مثال   4 — مقایسه دو درخت (با نمودار)
+
+
+'''
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+model1 = DecisionTreeClassifier(max_depth=None)
+model2 = DecisionTreeClassifier(max_depth=3)
+
+model1.fit(X, y)
+model2.fit(X, y)
+
+plt.figure(figsize=(14,5))
+plt.subplot(1,2,1)
+plot_tree(model1, filled=True)
+plt.title("Overfitted Tree")
+
+plt.subplot(1,2,2)
+plot_tree(model2, filled=True)
+plt.title("Pruned Tree (max_depth=3)")
+plt.show()
+
+'''
+
+---
+
+  Random Forest
+
+  مفاهیم:
+
+  چندین درخت
+  Bootstrapping
+  Aggregation
+  کاهش واریانس
+  اهمیت ویژگی‌ها
+
+'''
+'''
+  مثال   5 — Random Forest + نمودار Feature Importance
+
+'''
+# === A) Decision Tree Regression (صحیح) ===
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeRegressor
+
+# داده رگرسیون
+X = np.array([1,2,3,4,5,6]).reshape(-1,1)
+y = np.array([50,55,65,70,75,82])
+
+# مدل درخت رگرسیون
+reg = DecisionTreeRegressor(max_depth=3, random_state=42)
+reg.fit(X, y)
+
+# نمودار پیش‌بینی پله‌ای
+x_plot = np.linspace(1,6,200).reshape(-1,1)
+y_pred = reg.predict(x_plot)
+
+plt.figure(figsize=(7,4))
+plt.scatter(X, y, color='blue', label='Data')
+plt.plot(x_plot, y_pred, color='red', label='DT Regression')
+plt.title("Decision Tree Regression (max_depth=3)")
+plt.xlabel("Hours")
+plt.ylabel("Scores")
+plt.legend()
+plt.show()
+
+
+# === B) Decision Tree Classifier + Random Forest (مثال با Iris) ===
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+import matplotlib.pyplot as plt
+
+# بارگذاری دیتاست طبقه‌بندی
+iris = load_iris()
+Xc = iris.data[:, :2]   # برای رسم مرز از دو ویژگی اول استفاده می‌کنیم
+yc = iris.target
+feature_names = iris.feature_names[:2]
+class_names = iris.target_names
+
+# 1) Decision Tree Classifier (رسم درخت و boundary)
+dtc = DecisionTreeClassifier(max_depth=3, random_state=42)
+dtc.fit(Xc, yc)
+
+# رسم درخت
+plt.figure(figsize=(12,6))
+plot_tree(dtc, feature_names=feature_names, class_names=class_names, filled=True, fontsize=8)
+plt.title("Decision Tree Classifier (max_depth=3) - Iris (2 features)")
+plt.show()
+
+# رسم مرز تصمیم (decision boundary)
+x_min, x_max = Xc[:, 0].min() - 1, Xc[:, 0].max() + 1
+y_min, y_max = Xc[:, 1].min() - 1, Xc[:, 1].max() + 1
+xx, yy = np.meshgrid(np.linspace(x_min,x_max,300), np.linspace(y_min,y_max,300))
+Z = dtc.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+
+plt.figure(figsize=(7,6))
+plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+plt.scatter(Xc[:,0], Xc[:,1], c=yc, edgecolor='k', cmap=plt.cm.coolwarm)
+plt.xlabel(feature_names[0])
+plt.ylabel(feature_names[1])
+plt.title("Decision Boundary - Decision Tree (Iris)")
+plt.show()
+
+# 2) Random Forest Classifier (Feature Importance)
+rf = RandomForestClassifier(n_estimators=200, random_state=42)
+rf.fit(Xc, yc)
+
+importances = rf.feature_importances_
+indices = np.argsort(importances)
+
+plt.figure(figsize=(6,4))
+plt.barh(np.array(feature_names)[indices], importances[indices])
+plt.title("Feature Importance - Random Forest (Iris, 2 features)")
+plt.xlabel("Importance")
+plt.show()
+
+
+'''
+
+ توضیح خروجی: 
+بیشترین قدرت تفکیک متعلق به کدام ویژگی است.
+توضیح خروجی‌ها (چه چیزی رسم می‌شود و چرا مفید است)
+
+نمودار اول (A): نقاط آبی = داده‌ی واقعی 
+(hours vs scores). خط قرمز = پیش‌بینی درخت رگرسیون (پله‌ای). 
+نشان می‌دهد درخت رگرشن مقادیر را در بخش‌های مجزا پیش‌بینی می‌کند.
+
+نمودار درخت (B.1): درخت تصمیم آموزش‌دیده
+ روی Iris با برچسب‌ها و معیارهای هر گره. مفید برای فهم قوانین تصمیم.
+
+Decision boundary (B.1):
+    فضای دو بعدی به نواحی رنگی تقسیم شده بر اساس کلاس 
+پیش‌بینی‌شده؛
+ نقاط نمونه‌ها روی آن قرار دارند
+ — نشان می‌دهد درخت چگونه فضای
+ ویژگی را به بلوک‌ها تقسیم کرده.
+
+Feature importance (B.2): میله‌ها اهمیت هر ویژگی را نشان می‌دهند (در این مثال فقط 
+                                                                  دو ویژگی اول).
+---
+
+ مقایسه Decision Tree vs Random Forest
+
+ مفاهیم:
+
+  Bias / Variance
+  مدل ساده vs مدل قوی
+  چرا جنگل تصادفی بهتر است؟
+
+  مثال   6 — مقایسه دقت دو مدل
+
+
+'''
+# -------------------------------
+# مقایسه Decision Tree و Random Forest روی Iris
+# -------------------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
+import seaborn as sns
+import pandas as pd
+
+# 1. بارگذاری داده
+iris = load_iris()
+X = iris.data
+y = iris.target
+feature_names = iris.feature_names
+class_names = iris.target_names
+
+# 2. تقسیم داده به آموزش و تست
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# 3. مدل‌ها
+dt = DecisionTreeClassifier(max_depth=3, random_state=42)
+rf = RandomForestClassifier(n_estimators=200, max_depth=3, random_state=42)
+
+# 4. آموزش مدل‌ها
+dt.fit(X_train, y_train)
+rf.fit(X_train, y_train)
+
+# 5. دقت مدل‌ها
+dt_acc = accuracy_score(y_test, dt.predict(X_test))
+rf_acc = accuracy_score(y_test, rf.predict(X_test))
+print(f"Decision Tree Accuracy: {dt_acc:.3f}")
+print(f"Random Forest Accuracy: {rf_acc:.3f}")
+
+# 6. ماتریس درهم‌ریختگی
+dt_cm = confusion_matrix(y_test, dt.predict(X_test))
+rf_cm = confusion_matrix(y_test, rf.predict(X_test))
+
+plt.figure(figsize=(12,5))
+plt.subplot(1,2,1)
+sns.heatmap(dt_cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+plt.title("Decision Tree Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+
+plt.subplot(1,2,2)
+sns.heatmap(rf_cm, annot=True, fmt='d', cmap='Greens', xticklabels=class_names, yticklabels=class_names)
+plt.title("Random Forest Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.tight_layout()
+plt.show()
+
+# 7. رسم درخت تصمیم
+plt.figure(figsize=(15,6))
+plot_tree(dt, feature_names=feature_names, class_names=class_names, filled=True, rounded=True)
+plt.title("Decision Tree Structure")
+plt.show()
+
+# 8. Feature importance Random Forest
+importances = rf.feature_importances_
+df_importance = pd.DataFrame({"Feature": feature_names, "Importance": importances}).sort_values(by="Importance", ascending=True)
+
+plt.figure(figsize=(8,5))
+plt.barh(df_importance['Feature'], df_importance['Importance'], color='skyblue')
+plt.title("Random Forest Feature Importance")
+plt.xlabel("Importance")
+plt.ylabel("Feature")
+plt.show()
+
+
+'''
+
+
+
+'''
+
+
+
 
 
 
